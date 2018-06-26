@@ -1,0 +1,39 @@
+language: java
+sudo: false
+jdk:
+- oraclejdk8
+
+script:
+  - if [ "${COVERITY_SCAN_BRANCH}" == 1 ]; then exit; fi
+  - mvn clean compile findbugs:check package
+
+env:
+  global:
+    secure: hH+ndhQYLCfGaJ8XXW0GW9jO8wv4Ek0tDz3StzyVq9F+6meXOiGFIJ6MCyLPVZouxpCYj03PC0DunWAYYn+e3lgdMeOBLIg6/1BpOs5i0eHImE6O7pdo/+/jsHtR60PG9qRNfw2JXpPTI0F730o4UBi4V2eY2hWfmCIAWj61X9U=
+
+addons:
+  apt:
+    packages:
+      - libc6:i386
+  coverity_scan:
+    project:
+      name: martinpaljak/capfile
+      description: capfile
+    notification_email: martin@martinpaljak.net
+    build_command: mvn clean compile
+    branch_pattern: coverity
+
+deploy:
+  file:
+    - target/capfile.jar
+    - target/capfile.exe
+  provider: releases
+  api-key:
+    secure: "TgHHgXIDbDwFsop2ZG8FD73VlEA5aygu9bMp1eVrLPvpgpYLEZztBMNaqY+wlb1dJ7yWByvLmtYGx8HXdY5y2vROqtEvG8bBEz++39wNlAQ7tAeGox0EG+GNZtJ0Zcuho4JDgoxKaJW5vdltIN3JO783tEyJU6Ks8j4kPAHXrpA="
+  skip_cleanup: true
+  on:
+    tags: true
+
+cache:
+  directories:
+    - ~/.m2

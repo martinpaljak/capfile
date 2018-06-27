@@ -64,7 +64,7 @@ public class CAPFile {
         return fromStream(new ByteArrayInputStream(bytes));
     }
 
-    private CAPFile(InputStream in) throws IOException {
+    protected CAPFile(InputStream in) throws IOException {
         final Map<String, byte[]> entries;
         try (ZipInputStream zip = new ZipInputStream(in)) {
             // All ZIP entries

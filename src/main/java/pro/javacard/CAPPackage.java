@@ -66,4 +66,12 @@ public class CAPPackage {
     public AID getAid() {
         return aid;
     }
+
+    public int getMinor() {
+        return minor;
+    }
+
+    public int getMajor() {
+        return major;
+    }
 }

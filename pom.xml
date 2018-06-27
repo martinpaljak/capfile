@@ -5,7 +5,7 @@
     <groupId>com.github.martinpaljak</groupId>
     <artifactId>capfile</artifactId>
     <packaging>jar</packaging>
-    <version>18.06.26</version>
+    <version>18.06.27</version>
     <name>capfile</name>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>

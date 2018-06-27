@@ -102,6 +102,7 @@
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
+                <version>1.7.22</version>
                 <executions>
                     <execution>
                         <id>capfile-exe</id>

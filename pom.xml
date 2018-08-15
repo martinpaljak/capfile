@@ -5,7 +5,8 @@
     <groupId>com.github.martinpaljak</groupId>
     <artifactId>capfile</artifactId>
     <packaging>jar</packaging>
-    <version>18.06.27</version>
+    <!-- Month is without leading zero, to keep launch4j not considering it as octal-->
+    <version>18.8.15</version>
     <name>capfile</name>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>

@@ -21,21 +21,59 @@
  */
 package pro.javacard;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Vector;
 
 public class CAPFileTool {
 
+    private static boolean has(Vector<String> args, String v) {
+        for (String s : args) {
+            if (s.equalsIgnoreCase(v)) {
+                args.remove(s);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static void main(String[] argv) {
-        if (argv.length < 1) {
-            fail("capfile <file ...>");
+        Vector<String> args = new Vector<>(Arrays.asList(argv));
+
+        boolean verify = has(args, "-v");
+
+        OffCardVerifier verifier = null;
+
+        if (verify) {
+            String sdkpath = System.getenv("JC_HOME");
+            if (sdkpath == null)
+                fail("You need to point $JC_HOME to a JavaCard SDK to verify CAP files!");
+
+            JavaCardSDK sdk = JavaCardSDK.detectSDK(sdkpath);
+            if (sdk == null)
+                fail("Could not fetect a valid JavaCard SDK in $JC_HOME: " + sdkpath);
+
+            verifier = OffCardVerifier.forSDK(sdk);
+        }
+
+        if (args.size() < 1) {
+            fail("capfile [-v] <file ...>");
         }
         try {
-            for (String f : argv) {
+            for (String f : args) {
                 System.out.println("# " + f);
                 CAPFile cap = CAPFile.fromBytes(Files.readAllBytes(Paths.get(f)));
                 cap.dump(System.out);
+                if (verify) {
+                    try {
+                        verifier.verify(new File(f));
+                    } catch (VerifierError e) {
+                        System.err.println("Verification failed: " + e.getMessage());
+                    }
+                }
             }
         } catch (IOException e) {
             fail("Could not read CAP file: " + e.getMessage());

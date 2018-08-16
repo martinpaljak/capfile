@@ -5,13 +5,14 @@
     <groupId>com.github.martinpaljak</groupId>
     <artifactId>capfile</artifactId>
     <packaging>jar</packaging>
-    <!-- Month is without leading zero, to keep launch4j not considering it as octal-->
-    <version>18.8.15</version>
+    <version>18.08.16</version>
     <name>capfile</name>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <!-- Elements must be without leading zero, to keep launch4j not considering it as octal -->
+        <project.version.windows>18.8.16.0</project.version.windows>
     </properties>
     <dependencies>
         <dependency>
@@ -123,11 +124,11 @@
                                 <minVersion>1.8.0</minVersion>
                             </jre>
                             <versionInfo>
-                                <fileVersion>${project.version}.0</fileVersion>
+                                <fileVersion>${project.version.windows}</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>Parse JavaCard CAP files</fileDescription>
                                 <copyright>(C) 2018 Martin Paljak (MIT License)</copyright>
-                                <productVersion>${project.version}.0</productVersion>
+                                <productVersion>${project.version.windows}</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>capfile</productName>
                                 <internalName>capfile</internalName>

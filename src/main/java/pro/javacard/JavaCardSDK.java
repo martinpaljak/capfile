@@ -228,7 +228,7 @@ public final class JavaCardSDK {
         return jars;
     }
 
-    enum Version {
+    public enum Version {
         NONE, V21, V221, V222, V301, V304, V305;
 
         @Override

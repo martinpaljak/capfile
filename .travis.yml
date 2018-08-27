@@ -24,8 +24,6 @@ deploy:
   - target/capfile.jar
   - target/capfile.exe
   provider: releases
-  api-key:
-    secure: kkt7G7PNpWV2YfoxzvmpnudcYuObE3Swxg3UlAfT/8kyJoCNeUHRUx8J7hWCo1BvbDHpK78+v35fFVbU25CVyi1iyVMMnzS0gR5YNnyE34xJPPvJdLLc1z5i9FV845wGM19vzBU8XuPSxxznB+kndgJ4fqYhMfgeA1+6yWTkRXnvnGWBpUcHQv1yorRqQ6Zao/bb3nsooWkdGu4r3VRzsrOtY9Viek1PkDX6p+xuD3q1SJQVwu4Yk+8bwjLr1gwO2HECRNWIpwLlNdF0tnb3hc/xV4nsf+ySb4mooqpwoTHOV2xaQgDonJ1uyYXpAZvTRQ4iapNKPOt/biVo9XaQc43ESJPvM2NIypbsvWz9OfTNJAmyxF5Jg/+DlbXImQrmsZ60QrdrZVXpe/7WNO/4o+bqMVQ8D6eySvby2QTHq8Vzt2/CyCU+B2FZueZRXCGpOSR3ZTJ0PRNP/CGm53FymqYq8IfF0MJD5AXLUAmi+LCW0I7vKKUUfwuYMtfhXFtILQPCdK8M9DJ2scOXaw4qHEqjTRA3JmAXWLKAWS2DYzJTOQBCGgL9lAZ4Rs21k+2miLKnL+sOlqFR/SPMjmVv64RfyvbK5GRlAs0rJanQmvNZjw4cG1c5k5hv5G8mEE7y/P9MEUNfgC75UIgCN2s+Kr7ZFfVgjsHotatjheLU6K0=
   skip_cleanup: true
   on:
     tags: true

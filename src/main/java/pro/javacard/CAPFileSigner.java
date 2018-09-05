@@ -1,0 +1,64 @@
+/*
+ * Copyright (c) 2018 Martin Paljak
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+package pro.javacard;
+
+import org.bouncycastle.openssl.PEMKeyPair;
+import org.bouncycastle.openssl.PEMParser;
+import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
+import java.security.KeyPair;
+import java.security.PrivateKey;
+import java.security.Signature;
+import java.security.interfaces.RSAPrivateKey;
+
+public class CAPFileSigner {
+    // Variant 1
+    public static void addSignature(CAPFile cap, PrivateKey key) throws GeneralSecurityException {
+        if (key instanceof RSAPrivateKey) {
+            RSAPrivateKey rkey = (RSAPrivateKey) key;
+            if (rkey.getModulus().bitLength() == 1024) {
+                Signature signer = Signature.getInstance("SHA1withRSA");
+                signer.initSign(key);
+                signer.update(cap.getLoadFileDataHash("SHA1", false));
+                byte[] dap = signer.sign();
+                cap.entries.put("META-INF/" + CAPFile.DAP_RSA_V1_SHA1_FILE, dap);
+                signer.initSign(key);
+                signer.update(cap.getLoadFileDataHash("SHA-256", false));
+                dap = signer.sign();
+                cap.entries.put("META-INF/" + CAPFile.DAP_RSA_V1_SHA256_FILE, dap);
+                return;
+            }
+        }
+        throw new IllegalArgumentException("Only 1024 bit RSA keys are supported!");
+    }
+
+    public static KeyPair pem2keypair(String f) throws IOException {
+        try (PEMParser pem = new PEMParser(new InputStreamReader(new FileInputStream(f), "UTF-8"))) {
+            PEMKeyPair kp = (PEMKeyPair) pem.readObject();
+            return new JcaPEMKeyConverter().getKeyPair(kp);
+        }
+    }
+}

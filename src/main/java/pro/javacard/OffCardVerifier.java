@@ -103,7 +103,7 @@ public class OffCardVerifier {
 
             try (FileInputStream input = new FileInputStream(f)) {
                 // 3.0.5u1 still uses old signature
-                if (sdk.getRelease().equals("v3.0.5u3") || sdk.getRelease().equals("v3.0.5u2")) {
+                if (sdk.getRelease().equals("3.0.5u3") || sdk.getRelease().equals("3.0.5u2")) {
                     Method m = verifier.getMethod("verifyCap", File.class, String.class, Vector.class);
                     m.invoke(null, f, packagename, expfiles);
                 } else {

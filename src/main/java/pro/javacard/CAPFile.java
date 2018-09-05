@@ -39,19 +39,26 @@ import java.util.jar.Attributes;
 import java.util.jar.Manifest;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
+import java.util.zip.ZipOutputStream;
 
 /**
  * Parses a CAP file as specified in JavaCard 2.2 VM Specification, chapter 6.
+ * CAP files are really small, so we keep it in memory.
  */
 public class CAPFile {
+    public static final String DAP_RSA_V1_SHA1_FILE = "dap.rsa.sha1";
+    public static final String DAP_RSA_V1_SHA256_FILE = "dap.rsa.sha256";
+
     private static final String[] componentNames = {"Header", "Directory", "Import", "Applet", "Class", "Method", "StaticField", "Export",
             "ConstantPool", "RefLocation", "Descriptor", "Debug"};
-    private final HashMap<String, byte[]> components = new HashMap<>();
+    final Map<String, byte[]> entries; // All raw ZIP entries
+    // Parsed content
     private final Map<AID, String> applets = new LinkedHashMap<>();
     private final List<CAPPackage> imports = new ArrayList<>();
     private CAPPackage pkg;
     private byte flags;
     private String cap_version; // Always 2.1
+    // Metadata
     private Manifest manifest = null; // From 2.2.2
     private Document appletxml = null; // From 3.0.1
 
@@ -64,20 +71,38 @@ public class CAPFile {
         return fromStream(new ByteArrayInputStream(bytes));
     }
 
+    protected byte[] getComponent(String name) {
+        return entries.get(pkg2jcdir(pkg.name) + name + ".cap");
+    }
+
+    public byte[] getMetaInfEntry(String name) {
+        return entries.get("META-INF/" + name);
+    }
+
+    public void store(OutputStream to) throws IOException {
+        try (ZipOutputStream out = new ZipOutputStream(to)) {
+            for (Map.Entry<String, byte[]> e : entries.entrySet()) {
+                out.putNextEntry(new ZipEntry(e.getKey()));
+                out.write(e.getValue());
+                out.closeEntry();
+            }
+        }
+    }
+
+
     protected CAPFile(InputStream in) throws IOException {
-        final Map<String, byte[]> entries;
         try (ZipInputStream zip = new ZipInputStream(in)) {
             // All ZIP entries
             entries = readEntries(zip);
             // Parse manifest
-            byte[] mf = entries.remove("META-INF/MANIFEST.MF");
+            byte[] mf = entries.get("META-INF/MANIFEST.MF");
             if (mf != null) {
                 ByteArrayInputStream mfi = new ByteArrayInputStream(mf);
                 manifest = new Manifest(mfi);
             }
 
             // Only if there are applets
-            byte[] ai = entries.remove("APPLET-INF/applet.xml");
+            byte[] ai = entries.get("APPLET-INF/applet.xml");
             if (ai != null) {
                 try {
                     DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
@@ -95,7 +120,6 @@ public class CAPFile {
         for (String p : entries.keySet()) {
             if (p.endsWith("Header.cap")) {
                 pkgname = jcdir2pkg(p);
-                //p.substring(0, p.lastIndexOf("Header.cap"));
                 break;
             }
         }
@@ -104,15 +128,9 @@ public class CAPFile {
             throw new IOException("Could not figure out the package name of the applet!");
         }
 
-        // Read all components for the package
-        for (String name : componentNames) {
-            components.put(name, entries.get(pkg2jcdir(pkgname) + name + ".cap"));
-        }
-
-
         // Parse package.
         // See JCVM 2.2 spec section 6.3 for offsets.
-        byte[] header = components.get("Header");
+        byte[] header = entries.get(pkg2jcdir(pkgname) + "Header.cap");
         cap_version = String.format("%d.%d", header[8], header[7]);
         flags = header[9];
 
@@ -120,7 +138,7 @@ public class CAPFile {
 
         // Parse applets
         // See JCVM 2.2 spec section 6.5 for offsets.
-        byte[] applet = components.get("Applet");
+        byte[] applet = getComponent("Applet");
         if (applet != null) {
             int offset = 4;
             for (int j = 0; j < (applet[3] & 0xFF); j++) {
@@ -135,7 +153,7 @@ public class CAPFile {
             }
         }
         // Parse imports
-        byte[] imps = components.get("Import");
+        byte[] imps = getComponent("Import");
         if (imps != null) {
             int offset = 4;
             for (int j = 0; j < (imps[3] & 0xFF); j++) {
@@ -146,7 +164,7 @@ public class CAPFile {
             }
         }
 
-        // Parse metadata to get applet names
+        // Parse metadata to get applet names. Somewhat redundant
         if (appletxml != null) {
             NodeList apps = appletxml.getElementsByTagName("applet");
             for (int i = 0; i < apps.getLength(); i++) {
@@ -194,7 +212,7 @@ public class CAPFile {
     public byte[] getCode(boolean includeDebug) {
         byte[] result = new byte[0];
         for (String name : componentNames) {
-            byte[] c = components.get(name);
+            byte[] c = getComponent(name);
             if (c == null)
                 continue;
             if (!includeDebug && (name.equals("Debug") || name.equals("Descriptor")))

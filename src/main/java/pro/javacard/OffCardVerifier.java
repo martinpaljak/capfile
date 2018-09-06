@@ -21,17 +21,15 @@
  */
 package pro.javacard;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
+import java.nio.file.*;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.util.Enumeration;
 import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 
 public class OffCardVerifier {
 
@@ -53,23 +51,8 @@ public class OffCardVerifier {
         }
     }
 
-    public void verify(File f) throws VerifierError {
-        try {
-            CAPFile cap = CAPFile.fromStream(new FileInputStream(f));
-            // Check for unknown imports
-            for (CAPPackage p : cap.getImports()) {
-                if (WellKnownAID.getJavaCardName(p.aid) == null) {
-                    throw new VerifierError("Can only verify plain JavaCard CAP files at the moment: import " + p.name);
-                }
-            }
-        } catch (IOException e) {
-            throw new VerifierError("Could not open CAP: " + e.getMessage(), e);
-        }
-        Vector<File> exps = new Vector<>();
-        verify(f, exps);
-    }
-
     public void verify(File f, Vector<File> exps) throws VerifierError {
+        File tmp = makeTemp();
         try {
             CAPFile cap = CAPFile.fromStream(new FileInputStream(f));
 
@@ -81,8 +64,7 @@ public class OffCardVerifier {
 
             final Vector<File> expfiles = new Vector<>();
             for (File e : exps) {
-                // collect all export files.
-                // TODO: Also look into jar files for embedded .exp-s
+                // collect all export files to a list
                 if (e.isDirectory()) {
                     Files.walkFileTree(e.toPath(), new SimpleFileVisitor<Path>() {
                         @Override
@@ -95,7 +77,11 @@ public class OffCardVerifier {
                         }
                     });
                 } else if (e.isFile()) {
-                    expfiles.add(e);
+                    if (e.toString().endsWith(".exp")) {
+                        expfiles.add(e);
+                    } else if (e.toString().endsWith(".jar")) {
+                        expfiles.addAll(extractExps(e, tmp));
+                    }
                 }
             }
 
@@ -113,8 +99,81 @@ public class OffCardVerifier {
             } catch (InvocationTargetException e) {
                 throw new VerifierError(e.getTargetException().getMessage(), e.getTargetException());
             }
+            System.out.println("Verified " + expfiles);
         } catch (ReflectiveOperationException | IOException e) {
             throw new RuntimeException("Could not run verifier: " + e.getMessage());
+        } finally {
+            // Clean extracted exps
+            rmminusrf(tmp.toPath());
         }
+    }
+
+
+    private static void rmminusrf(Path path) {
+        try {
+            Files.walkFileTree(path, new SimpleFileVisitor<Path>() {
+                @Override
+                public FileVisitResult visitFile(Path file, BasicFileAttributes attrs)
+                        throws IOException {
+                    Files.delete(file);
+                    return FileVisitResult.CONTINUE;
+                }
+
+                @Override
+                public FileVisitResult postVisitDirectory(Path dir, IOException e)
+                        throws IOException {
+                    if (e == null) {
+                        Files.delete(dir);
+                        return FileVisitResult.CONTINUE;
+                    } else {
+                        // directory iteration failed
+                        throw e;
+                    }
+                }
+            });
+        } catch (FileNotFoundException | NoSuchFileException e) {
+            // Already gone - do nothing.
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    
+    private File makeTemp() {
+        try {
+            return Files.createTempDirectory("capfile").toFile();
+        } catch (IOException e) {
+            throw new RuntimeException("Can not make temporary folder", e);
+        }
+    }
+
+    private static Vector<File> extractExps(File in, File out) throws IOException {
+        Vector<File> exps = new Vector<>();
+        try (JarFile jarfile = new JarFile(in)) {
+            Enumeration<JarEntry> entries = jarfile.entries();
+            while (entries.hasMoreElements()) {
+                JarEntry entry = entries.nextElement();
+                if (entry.getName().toLowerCase().endsWith(".exp")) {
+                    File f = new File(out, entry.getName());
+                    if (!f.exists()) {
+                        if (!f.getParentFile().mkdirs())
+                            throw new IOException("Failed to create folder: " + f.getParentFile());
+                        f = new File(out, entry.getName());
+                    }
+                    try (InputStream is = jarfile.getInputStream(entry);
+                         FileOutputStream fo = new java.io.FileOutputStream(f)) {
+                        byte[] buf = new byte[1024];
+                        while (true) {
+                            int r = is.read(buf);
+                            if (r == -1) {
+                                break;
+                            }
+                            fo.write(buf, 0, r);
+                        }
+                    }
+                    exps.add(f);
+                }
+            }
+        }
+        return exps;
     }
 }

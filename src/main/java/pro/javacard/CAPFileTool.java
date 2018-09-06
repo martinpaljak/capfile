@@ -10,6 +10,7 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.util.Arrays;
 import java.util.Vector;
+import java.util.stream.Collectors;
 
 public class CAPFileTool {
 
@@ -26,11 +27,11 @@ public class CAPFileTool {
     public static void main(String[] argv) {
         Vector<String> args = new Vector<>(Arrays.asList(argv));
 
-        if (args.size() < 1) {
+        if (args.size() < 1 || has(args, "-h")) {
             System.err.println("Usage:");
-            System.err.println("    capfile <capfile>");
-            System.err.println("    capfile -v <sdkpath> <capfile>"); // TODO: <expfiles...>
-            System.err.println("    capfile -s <keyfile> <capfile>");
+            System.err.println("    dump:   capfile <capfile>");
+            System.err.println("    verify: capfile -v <sdkpath> <capfile> [<expfiles...>]");
+            System.err.println("    sign:   capfile -s <keyfile> <capfile>");
             System.exit(1);
         }
 
@@ -61,15 +62,21 @@ public class CAPFileTool {
                     fail("Usage:\n    capfile -v <sdkpath> <capfile> [<expfiles...>]");
                 String sdkpath = args.remove(0);
                 String capfile = args.remove(0);
+                Vector<File> exps = new Vector<>(args.stream().map(i -> new File(i)).collect(Collectors.toList()));
                 CAPFile cap = CAPFile.fromBytes(Files.readAllBytes(Paths.get(capfile)));
                 cap.dump(System.out);
                 try {
                     JavaCardSDK sdk = JavaCardSDK.detectSDK(sdkpath);
                     OffCardVerifier verifier = OffCardVerifier.forSDK(sdk);
-                    verifier.verify(new File(capfile));
+                    verifier.verify(new File(capfile), exps);
+                    System.out.println("Verified " + capfile);
                 } catch (VerifierError e) {
                     fail("Verification failed: " + e.getMessage());
                 }
+            } else {
+                String capfile = args.remove(0);
+                CAPFile cap = CAPFile.fromBytes(Files.readAllBytes(Paths.get(capfile)));
+                cap.dump(System.out);
             }
         } catch (IOException | IllegalArgumentException e) {
             fail(e.getMessage());

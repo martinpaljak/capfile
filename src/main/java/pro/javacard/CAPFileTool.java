@@ -67,8 +67,10 @@ public class CAPFileTool {
                 cap.dump(System.out);
                 try {
                     JavaCardSDK sdk = JavaCardSDK.detectSDK(sdkpath);
+                    // Add SDK
+                    exps.add(sdk.getExportDir());
                     OffCardVerifier verifier = OffCardVerifier.forSDK(sdk);
-                    verifier.verify(new File(capfile), exps);
+                    verifier.verifyAgainst(new File(capfile), sdk, exps);
                     System.out.println("Verified " + capfile);
                 } catch (VerifierError e) {
                     fail("Verification failed: " + e.getMessage());

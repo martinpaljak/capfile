@@ -145,7 +145,7 @@ public final class JavaCardSDK {
         if (version == Version.V305) {
             try {
                 // Get verifier class
-                Class verifier = Class.forName("com.sun.javacard.offcardverifier.Verifier", false, getClassLoader());
+                Class<?> verifier = Class.forName("com.sun.javacard.offcardverifier.Verifier", false, getClassLoader());
 
                 // Check if 3.0.5u3 (or, hopefully, later)
                 try {

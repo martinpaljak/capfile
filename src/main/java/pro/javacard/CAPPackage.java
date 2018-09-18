@@ -56,7 +56,7 @@ public class CAPPackage {
 
     @Override
     public String toString() {
-        return (name == null ? "(unknown)" : name + " ") + aid + String.format(" v%d.%d", major, minor);
+        return (name == null ? "(unknown) " : name + " ") + aid + String.format(" v%d.%d", major, minor);
     }
 
     public String getVersionString() {

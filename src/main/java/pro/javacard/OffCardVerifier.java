@@ -44,23 +44,27 @@ public class OffCardVerifier {
 
     private OffCardVerifier(JavaCardSDK sdk) {
         this.sdk = sdk;
-        System.out.println("Verifying with " + sdk.getRelease());
         // Warn about recommended usage
         if (!sdk.getRelease().equals("3.0.5u3")) {
-            System.err.println("NB! Please use at least JavaCard SDK 3.0.5u3 when verifying!");
+            System.err.println("NB! Please use JavaCard SDK 3.0.5u3 or later for verifying!");
         }
     }
 
+    // Verify a CAP file against a specific JavaCard target SDK and a set of EXP files
+    public void verifyAgainst(File f, JavaCardSDK target, Vector<File> exps) throws VerifierError {
+        Vector<File> exports = new Vector<>(exps);
+        exports.add(target.getExportDir());
+        verify(f, exports);
+    }
+
+    // Verify a given CAP file against a set of EXP files
     public void verify(File f, Vector<File> exps) throws VerifierError {
         File tmp = makeTemp();
         try {
             CAPFile cap = CAPFile.fromStream(new FileInputStream(f));
 
             // Get verifier class
-            Class verifier = Class.forName("com.sun.javacard.offcardverifier.Verifier", true, sdk.getClassLoader());
-
-            // SDK
-            exps.add(sdk.getExportDir());
+            Class<?> verifier = Class.forName("com.sun.javacard.offcardverifier.Verifier", true, sdk.getClassLoader());
 
             final Vector<File> expfiles = new Vector<>();
             for (File e : exps) {
@@ -99,7 +103,6 @@ public class OffCardVerifier {
             } catch (InvocationTargetException e) {
                 throw new VerifierError(e.getTargetException().getMessage(), e.getTargetException());
             }
-            System.out.println("Verified " + expfiles);
         } catch (ReflectiveOperationException | IOException e) {
             throw new RuntimeException("Could not run verifier: " + e.getMessage());
         } finally {
@@ -107,7 +110,6 @@ public class OffCardVerifier {
             rmminusrf(tmp.toPath());
         }
     }
-
 
     private static void rmminusrf(Path path) {
         try {
@@ -137,7 +139,7 @@ public class OffCardVerifier {
             throw new RuntimeException(e);
         }
     }
-    
+
     private File makeTemp() {
         try {
             return Files.createTempDirectory("capfile").toFile();
@@ -146,7 +148,7 @@ public class OffCardVerifier {
         }
     }
 
-    private static Vector<File> extractExps(File in, File out) throws IOException {
+    public static Vector<File> extractExps(File in, File out) throws IOException {
         Vector<File> exps = new Vector<>();
         try (JarFile jarfile = new JarFile(in)) {
             Enumeration<JarEntry> entries = jarfile.entries();

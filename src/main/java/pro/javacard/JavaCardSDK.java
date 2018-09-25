@@ -260,4 +260,17 @@ public final class JavaCardSDK {
         }
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof JavaCardSDK) {
+            JavaCardSDK other = (JavaCardSDK) o;
+            return path.getAbsolutePath().equals(other.path.getAbsolutePath()) && version.equals(other.version);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return path.hashCode();
+    }
 }

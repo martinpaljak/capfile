@@ -5,16 +5,17 @@
     <groupId>com.github.martinpaljak</groupId>
     <artifactId>capfile</artifactId>
     <packaging>jar</packaging>
-    <version>18.09.18</version>
+    <version>18.09.25</version>
     <name>capfile</name>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Elements must be without leading zero, to keep launch4j not considering it as octal -->
-        <project.version.windows>18.9.18.0</project.version.windows>
+        <project.version.windows>18.9.25.0</project.version.windows>
     </properties>
     <dependencies>
+        <!-- For PEM parsing in the signing tool -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
@@ -173,16 +174,55 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Reproducible -->
+            <plugin>
+                <groupId>pl.project13.maven</groupId>
+                <artifactId>git-commit-id-plugin</artifactId>
+                <version>2.2.5</version>
+                <executions>
+                    <execution>
+                        <id>retrieve-git-info</id>
+                        <phase>prepare-package</phase>
+                        <goals>
+                            <goal>revision</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <injectAllReactorProjects>true</injectAllReactorProjects>
+                    <runOnlyOnce>true</runOnlyOnce>
+                    <skipPoms>false</skipPoms>
+                    <dateFormat>yyyyMMddHHmmss</dateFormat>
+                    <dateFormatTimeZone>UTC</dateFormatTimeZone>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-jar-plugin</artifactId>
+                <version>3.1.0</version>
+                <configuration>
+                    <archive>
+                        <manifestEntries>
+                            <Last-Commit-Id>${git.commit.id}</Last-Commit-Id>
+                            <Last-Commit-Time>${git.commit.time}</Last-Commit-Time>
+                            <Reproducible-Build>true</Reproducible-Build>
+                        </manifestEntries>
+                    </archive>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>io.github.zlika</groupId>
                 <artifactId>reproducible-build-maven-plugin</artifactId>
-                <version>0.3</version>
+                <version>0.7</version>
                 <executions>
                     <execution>
-                        <phase>package</phase>
+                        <id>strip-jar</id>
                         <goals>
                             <goal>strip-jar</goal>
                         </goals>
+                        <configuration>
+                            <zipDateTime>${git.commit.time}</zipDateTime>
+                        </configuration>
                     </execution>
                 </executions>
             </plugin>

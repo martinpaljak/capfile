@@ -320,9 +320,29 @@ public class CAPFile {
                 }
             }
         }
-        // AID js = new AID("A0000000620102"); // javacard.security
-        // TODO: try also javacard.security
-        // Assume 2.1.1, for the case where javacard.framework is not included.
+
+        AID js = new AID("A0000000620102"); // javacard.security
+        for (CAPPackage p : imports) {
+            if (p.aid.equals(js)) {
+                switch (p.minor) {
+                    case 1:
+                        return "2.1.1";
+                    case 2:
+                        return "2.2.1";
+                    case 3:
+                        return "2.2.2";
+                    case 4:
+                        return "3.0.1";
+                    case 5:
+                        return "3.0.4";
+                    case 6:
+                        return "3.0.5";
+                    default:
+                        return String.format("unknown: %d.%d", p.major, p.minor);
+                }
+            }
+        }
+        // Assume 2.1.1, for the case where javacard.framework not javacard.security is not included.
         // Alternatively, return null
         return "2.1.1";
     }

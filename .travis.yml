@@ -4,7 +4,7 @@ jdk:
 - oraclejdk8
 script:
 - if [ "${COVERITY_SCAN_BRANCH}" == 1 ]; then exit; fi
-- mvn clean compile findbugs:check package
+- mvn clean verify
 env:
   global:
   - secure: NHrfs1KGRPy2gizlWbe1Gkt5bVbFOBLCoSMHJV+X2gnfo9ZLvj4xruYZ6oAXFMhlUEp2nQDwI36IJac/CuXU0+Bqrp2KErMxVFTmRY3DiyX/6ed0PHjxTMac7aKnyhfoxV4q8pANhepPgCJqP5BGKl89/5GnJlqxiPmaPimwyBiEb6IZSNtT2h0mUcjiFhxttjibiN2NFw6cKPyD/Ax2Nb6k6zV1W/Qkrx+ktwpbxVCtl+Tp2q0INPs1L1gw7qXuk27CnCrq0mCk4N/J0nogLQW6ba2orx04Zyy9+8oWi/NmJfV4Y0v87YDEZQkEc1/wQquRr/OS+mYlEa9dNjS7DNFAFFk+HFL68+HzzfkO3lmYDy1/eeiwZs4U8NxwJQrK7lsS9+fwczM9fnsNj+H5FnonAmR59RfS9F4sqcJBf9xygr9BiBXPncWYEqqfxogrO7P4S7DnA7ty02G+D/cXeevbDDD0AFoEi9hmKLsiviGIoEag0VK6KoYajgGd0eqUCEmrJBNEttWlBo5wJqklcskh3rEuCRBHTw+KSQftAssSArUoAKbv4H6jd9YuaVqp84XQK1oBBxSlx3DhZC8g+gEJDzrUojXfPTI5I/c+wmoOi2pJzlQ1gec3yHj8iJntyk4eifLHGOrn5XHx18KAf8au+Jzib7qLm9IEk/yxDH4=
@@ -29,6 +29,7 @@ deploy:
     tags: true
   api_key:
     secure: qwSOEnWpyeifYOQYR3LR1j0X0WGsa7De1d6iIdTgrKn87+axONo7FIR/DUR6uT7mXcDpLrTpIMO6HsE4kwPfuGdbEO1Zabh3wzCOxUB5LLCZ790ge6YBW9Zg33KF/9WSEZjRm0hF3DbeoOOxsfkKshL0Ein7mQygyGSkabvOEbZyvMZxbgnXH+FgrS8Lp+hqn2/814kW1fYTKEj2gvLumRnyYAB1jzbiekPhnx1YOocaDh+JMNnqKmk4LujoMncBbR0R7JoAHsNjN4+PPNgxzhzbDJ7JcELDOc4gfB9jCgArLSgMkF89ZcbS6yCNNt3ZAt1m2oHS7zbYnEzc9pvfr2t6TSOFNkd1en1A0vcPCpkKVcrXpclHnp9ydIlZrm8eT8UF2f3K30xnDTTg1SJ10fovtyzuAmBmzzqdN+wgqitjt08cLZdcJFZDNoZR26xf81Nf37eL7Ow7DUWhPzhPSuO+afYEq28VXW4Po50NQR0sEa3CeI4Dc6FJD6dmk/WimFhpCBalm+APmEWzAMGVXmo8gJYBh0TUX5cy00xCiMstwQSTy2V4wgF2T4X4taRb0YNFxkGLqWhg33X9t9JnqXQjaiisrwhqtRQcMZmV7tuO9VbSxv3ZjSqGkQ8p1Ib61ef2x2tqHLioUihLQXAxXHD06n390zrTaDJJyLZnCCQ=
+  prerelease: true
 cache:
   directories:
   - "~/.m2"

@@ -5,14 +5,14 @@
     <groupId>com.github.martinpaljak</groupId>
     <artifactId>capfile</artifactId>
     <packaging>jar</packaging>
-    <version>18.09.25</version>
+    <version>18.09.25.1</version>
     <name>capfile</name>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Elements must be without leading zero, to keep launch4j not considering it as octal -->
-        <project.version.windows>18.9.25.0</project.version.windows>
+        <project.version.windows>18.9.25.1</project.version.windows>
     </properties>
     <dependencies>
         <!-- For PEM parsing in the signing tool -->

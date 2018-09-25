@@ -58,8 +58,7 @@ public class OffCardVerifier {
     // Verify a CAP file against a specific JavaCard target SDK and a set of EXP files
     public void verifyAgainst(File f, JavaCardSDK target, Vector<File> exps) throws VerifierError {
         Vector<File> exports = new Vector<>(exps);
-        if (!sdk.equals(target))
-            exports.add(target.getExportDir());
+        exports.add(target.getExportDir());
         verify(f, exports);
     }
 

@@ -35,7 +35,12 @@ public class OffCardVerifier {
 
     private final JavaCardSDK sdk;
 
+    @Deprecated
     public static OffCardVerifier forSDK(JavaCardSDK sdk) {
+       return withSDK(sdk);
+    }
+
+    public static OffCardVerifier withSDK(JavaCardSDK sdk) {
         // Only main method in 2.1 SDK
         if (sdk.getVersion().equals(JavaCardSDK.Version.V21))
             throw new RuntimeException("Verification is supported with JavaCard SDK 2.2.1 or later");
@@ -53,7 +58,8 @@ public class OffCardVerifier {
     // Verify a CAP file against a specific JavaCard target SDK and a set of EXP files
     public void verifyAgainst(File f, JavaCardSDK target, Vector<File> exps) throws VerifierError {
         Vector<File> exports = new Vector<>(exps);
-        exports.add(target.getExportDir());
+        if (!sdk.equals(target))
+            exports.add(target.getExportDir());
         verify(f, exports);
     }
 

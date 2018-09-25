@@ -30,7 +30,6 @@ public class WellKnownAID {
     private static Map<AID, String> javaCardRegistry = new HashMap<>();
     private static Map<AID, String> wellKnownRegistry = new HashMap<>();
 
-
     static {
         // Copied from https://stackoverflow.com/questions/25031338/how-to-get-javacard-version-on-card/25063015#25063015
         // Extended and verified against JC SDK exp files
@@ -59,8 +58,8 @@ public class WellKnownAID {
 
         // Other well-known AID-s
         wellKnownRegistry.put(AID.fromString("A00000015100"), "org.globalplatform");
+        wellKnownRegistry.put(AID.fromString("A0000000030000"), "visa.openplatform");
     }
-
 
     public static String getJavaCardName(AID aid) {
         return javaCardRegistry.get(aid);

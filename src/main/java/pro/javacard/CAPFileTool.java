@@ -30,7 +30,7 @@ public class CAPFileTool {
         if (args.size() < 1 || has(args, "-h")) {
             System.err.println("Usage:");
             System.err.println("    dump:   capfile <capfile>");
-            System.err.println("    verify: capfile -v <sdkpath> <capfile> [<expfiles...>]");
+            System.err.println("    verify: capfile -v <sdkpath> [<targetsdkpath>] <capfile> [<expfiles...>]");
             System.err.println("    sign:   capfile -s <keyfile> <capfile>");
             System.exit(1);
         }
@@ -59,18 +59,27 @@ public class CAPFileTool {
 
             } else if (has(args, "-v")) {
                 if (args.size() < 2)
-                    fail("Usage:\n    capfile -v <sdkpath> <capfile> [<expfiles...>]");
-                String sdkpath = args.remove(0);
-                String capfile = args.remove(0);
+                    fail("Usage:\n    capfile -v <sdkpath> [<targetsdkpath>] <capfile> [<expfiles...>]");
+                final String sdkpath = args.remove(0);
+                final String targetsdkpath;
+                final String capfile;
+                final String next = args.remove(0);
+                if (Files.isDirectory(Paths.get(next))) {
+                    targetsdkpath = next;
+                    capfile = args.remove(0);
+                } else {
+                    capfile = next;
+                    targetsdkpath = sdkpath;
+                }
                 Vector<File> exps = new Vector<>(args.stream().map(i -> new File(i)).collect(Collectors.toList()));
                 CAPFile cap = CAPFile.fromBytes(Files.readAllBytes(Paths.get(capfile)));
                 cap.dump(System.out);
                 try {
                     JavaCardSDK sdk = JavaCardSDK.detectSDK(sdkpath);
-                    // Add SDK
-                    exps.add(sdk.getExportDir());
-                    OffCardVerifier verifier = OffCardVerifier.forSDK(sdk);
-                    verifier.verifyAgainst(new File(capfile), sdk, exps);
+                    JavaCardSDK target = JavaCardSDK.detectSDK(targetsdkpath);
+
+                    OffCardVerifier verifier = OffCardVerifier.withSDK(sdk);
+                    verifier.verifyAgainst(new File(capfile), target, exps);
                     System.out.println("Verified " + capfile);
                 } catch (VerifierError e) {
                     fail("Verification failed: " + e.getMessage());

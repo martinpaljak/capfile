@@ -6,9 +6,9 @@
 
 ## Off-card verification
 
-    java -jar capfile.jar -v <path to JavaCard SDK> <capfile> [<expfiles...>]
+    java -jar capfile.jar -v <path to JavaCard SDK> [<targetsdkpath>] <capfile> [<expfiles...>]
 
-(SDK-s usable on Unix machines are conveniently available from https://github.com/martinpaljak/oracle_javacard_sdks/). EXP files can be plain EXP files or JAR files containing EXP files.
+(SDK-s usable on Unix machines are conveniently available from https://github.com/martinpaljak/oracle_javacard_sdks/). EXP files can be plain EXP files or JAR files containing EXP files. Please use JavaCard 3.0.5u3 as the SDK and verify target SDK.
 
 ## DAP signing
 Usable with [GlobalPlatformPro](https://github.com/martinpaljak/GlobalPlatformPro). At the moment, only PKCS#1 v1.5 SHA1 signature with 1024 bit RSA key is supported.

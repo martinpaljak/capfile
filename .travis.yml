@@ -4,7 +4,7 @@ jdk:
 - oraclejdk8
 script:
 - if [ "${COVERITY_SCAN_BRANCH}" == 1 ]; then exit; fi
-- mvn clean compile findbugs:check package
+- mvn clean verify
 env:
   global:
   - secure: NHrfs1KGRPy2gizlWbe1Gkt5bVbFOBLCoSMHJV+X2gnfo9ZLvj4xruYZ6oAXFMhlUEp2nQDwI36IJac/CuXU0+Bqrp2KErMxVFTmRY3DiyX/6ed0PHjxTMac7aKnyhfoxV4q8pANhepPgCJqP5BGKl89/5GnJlqxiPmaPimwyBiEb6IZSNtT2h0mUcjiFhxttjibiN2NFw6cKPyD/Ax2Nb6k6zV1W/Qkrx+ktwpbxVCtl+Tp2q0INPs1L1gw7qXuk27CnCrq0mCk4N/J0nogLQW6ba2orx04Zyy9+8oWi/NmJfV4Y0v87YDEZQkEc1/wQquRr/OS+mYlEa9dNjS7DNFAFFk+HFL68+HzzfkO3lmYDy1/eeiwZs4U8NxwJQrK7lsS9+fwczM9fnsNj+H5FnonAmR59RfS9F4sqcJBf9xygr9BiBXPncWYEqqfxogrO7P4S7DnA7ty02G+D/cXeevbDDD0AFoEi9hmKLsiviGIoEag0VK6KoYajgGd0eqUCEmrJBNEttWlBo5wJqklcskh3rEuCRBHTw+KSQftAssSArUoAKbv4H6jd9YuaVqp84XQK1oBBxSlx3DhZC8g+gEJDzrUojXfPTI5I/c+wmoOi2pJzlQ1gec3yHj8iJntyk4eifLHGOrn5XHx18KAf8au+Jzib7qLm9IEk/yxDH4=

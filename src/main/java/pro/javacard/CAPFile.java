@@ -267,8 +267,8 @@ public class CAPFile {
             out.println("On " + cap_creation_time + " with JDK " + jdk_name);
         }
         out.println("Total code size: " + getCode(false).length + " bytes (" + getCode(true).length + " with debug)");
-        out.println("SHA256 (code): " + HexUtils.bin2hex(getLoadFileDataHash("SHA-256", false)));
-        out.println("SHA1   (code): " + HexUtils.bin2hex(getLoadFileDataHash("SHA-1", false)));
+        out.println("SHA256 (code): " + HexUtils.bin2hex(getLoadFileDataHash("SHA-256", false)).toLowerCase());
+        out.println("SHA1   (code): " + HexUtils.bin2hex(getLoadFileDataHash("SHA-1", false)).toLowerCase());
     }
 
     private List<String> getFlags() {

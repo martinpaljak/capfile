@@ -1,109 +1,38 @@
 <?xml version="1.0"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.github.martinpaljak</groupId>
+    <parent>
+        <groupId>com.github.martinpaljak</groupId>
+        <artifactId>javacard</artifactId>
+        <version>18.10.04</version>
+    </parent>
     <artifactId>capfile</artifactId>
     <packaging>jar</packaging>
-    <version>18.09.25.1</version>
-    <name>capfile</name>
+    <name>CAP file library</name>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- Elements must be without leading zero, to keep launch4j not considering it as octal -->
-        <project.version.windows>18.9.25.1</project.version.windows>
-    </properties>
+    <licenses>
+        <license>
+            <name>MIT</name>
+            <url>https://github.com/martinpaljak/capfile/blob/master/LICENSE</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
+    <scm>
+        <url>https://github.com/martinpaljak/capfile</url>
+        <developerConnection>scm:git:git@github.com:martinpaljak/capfile.git</developerConnection>
+    </scm>
     <dependencies>
         <!-- For PEM parsing in the signing tool -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.60</version>
+            <version>${bc.version}</version>
             <optional>true</optional>
         </dependency>
     </dependencies>
-    <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-    <profiles>
-        <profile>
-            <id>sign</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.8</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh-martinpaljak</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>2.4</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>2.10.4</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     <build>
         <plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.7.0</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <compilerArgs>
-                        <arg>-Xlint:deprecation</arg>
-                        <arg>-Xlint:unchecked</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -117,8 +46,7 @@
                         <configuration>
                             <finalName>capfile</finalName>
                             <transformers>
-                                <transformer
-                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>pro.javacard.CAPFileTool</mainClass>
                                 </transformer>
                             </transformers>
@@ -150,7 +78,6 @@
                         </goals>
                         <configuration>
                             <headerType>console</headerType>
-                            <outfile>target/capfile.exe</outfile>
                             <jar>target/capfile.jar</jar>
                             <errTitle>capfile</errTitle>
                             <classPath>
@@ -160,11 +87,11 @@
                                 <minVersion>1.8.0</minVersion>
                             </jre>
                             <versionInfo>
-                                <fileVersion>${project.version.windows}</fileVersion>
+                                <fileVersion>${revision.windows}</fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>Parse JavaCard CAP files</fileDescription>
                                 <copyright>(C) 2018 Martin Paljak (MIT License)</copyright>
-                                <productVersion>${project.version.windows}</productVersion>
+                                <productVersion>${revision.windows}</productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>capfile</productName>
                                 <internalName>capfile</internalName>
@@ -174,99 +101,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!-- Reproducible -->
-            <plugin>
-                <groupId>pl.project13.maven</groupId>
-                <artifactId>git-commit-id-plugin</artifactId>
-                <version>2.2.5</version>
-                <executions>
-                    <execution>
-                        <id>retrieve-git-info</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>revision</goal>
-                        </goals>
-                    </execution>
-                </executions>
-                <configuration>
-                    <injectAllReactorProjects>true</injectAllReactorProjects>
-                    <runOnlyOnce>true</runOnlyOnce>
-                    <skipPoms>false</skipPoms>
-                    <dateFormat>yyyyMMddHHmmss</dateFormat>
-                    <dateFormatTimeZone>UTC</dateFormatTimeZone>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-jar-plugin</artifactId>
-                <version>3.1.0</version>
-                <configuration>
-                    <archive>
-                        <manifestEntries>
-                            <Last-Commit-Id>${git.commit.id}</Last-Commit-Id>
-                            <Last-Commit-Time>${git.commit.time}</Last-Commit-Time>
-                            <Reproducible-Build>true</Reproducible-Build>
-                        </manifestEntries>
-                    </archive>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>io.github.zlika</groupId>
-                <artifactId>reproducible-build-maven-plugin</artifactId>
-                <version>0.7</version>
-                <executions>
-                    <execution>
-                        <id>strip-jar</id>
-                        <goals>
-                            <goal>strip-jar</goal>
-                        </goals>
-                        <configuration>
-                            <zipDateTime>${git.commit.time}</zipDateTime>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.1</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
-                <artifactId>maven-install-plugin</artifactId>
-                <version>2.4</version>
-                <configuration>
-                    <createChecksum>true</createChecksum>
-                </configuration>
-            </plugin>
         </plugins>
     </build>
-    <licenses>
-        <license>
-            <name>MIT</name>
-            <url>https://github.com/martinpaljak/capfile/blob/master/LICENSE</url>
-            <distribution>repo</distribution>
-        </license>
-    </licenses>
-    <scm>
-        <url>https://github.com/martinpaljak/capfile</url>
-    </scm>
-    <developers>
-        <developer>
-            <id>martinpaljak</id>
-            <name>Martin Paljak</name>
-            <email>martin@martinpaljak.net</email>
-            <url>https://github.com/martinpaljak</url>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-    </developers>
 </project>

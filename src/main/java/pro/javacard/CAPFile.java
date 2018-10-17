@@ -51,7 +51,7 @@ public class CAPFile {
 
     private static final String[] componentNames = {"Header", "Directory", "Import", "Applet", "Class", "Method", "StaticField", "Export",
             "ConstantPool", "RefLocation", "Descriptor", "Debug"};
-    final Map<String, byte[]> entries; // All raw ZIP entries
+    protected final Map<String, byte[]> entries; // All raw ZIP entries
     // Parsed content
     private final Map<AID, String> applets = new LinkedHashMap<>();
     private final List<CAPPackage> imports = new ArrayList<>();

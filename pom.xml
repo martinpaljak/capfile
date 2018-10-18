@@ -9,6 +9,7 @@
     <artifactId>capfile</artifactId>
     <packaging>jar</packaging>
     <name>CAP file library</name>
+    <version>18.10.18</version>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>
     <licenses>

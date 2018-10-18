@@ -24,6 +24,7 @@ package pro.javacard;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 public class WellKnownAID {
 
@@ -65,7 +66,7 @@ public class WellKnownAID {
         return javaCardRegistry.get(aid);
     }
 
-    public static String getName(AID aid) {
-        return wellKnownRegistry.getOrDefault(aid, javaCardRegistry.get(aid));
+    public static Optional<String> getName(AID aid) {
+        return Optional.ofNullable(wellKnownRegistry.getOrDefault(aid, javaCardRegistry.get(aid)));
     }
 }

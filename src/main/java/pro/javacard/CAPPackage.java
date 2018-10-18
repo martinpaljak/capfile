@@ -22,6 +22,7 @@
 package pro.javacard;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class CAPPackage {
     final AID aid;
@@ -56,7 +57,7 @@ public class CAPPackage {
 
     @Override
     public String toString() {
-        return (name == null ? "(unknown) " : name + " ") + aid + String.format(" v%d.%d", major, minor);
+        return String.format("%s %s v%d.%d", getName().orElse("(unknown)"), aid, major, minor);
     }
 
     public String getVersionString() {
@@ -73,5 +74,9 @@ public class CAPPackage {
 
     public int getMajor() {
         return major;
+    }
+
+    public Optional<String> getName() {
+        return Optional.ofNullable(name);
     }
 }

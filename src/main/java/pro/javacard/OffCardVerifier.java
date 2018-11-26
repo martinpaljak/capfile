@@ -75,7 +75,7 @@ public class OffCardVerifier {
             for (File e : exps) {
                 // collect all export files to a list
                 if (e.isDirectory()) {
-                    Files.walkFileTree(e.toPath(), new SimpleFileVisitor<Path>() {
+                    Files.walkFileTree(e.toPath().toRealPath(), new SimpleFileVisitor<Path>() {
                         @Override
                         public FileVisitResult visitFile(java.nio.file.Path file, BasicFileAttributes attrs)
                                 throws IOException {

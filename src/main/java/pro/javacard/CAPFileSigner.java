@@ -28,18 +28,33 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.security.GeneralSecurityException;
-import java.security.KeyPair;
-import java.security.PrivateKey;
-import java.security.Signature;
+import java.security.*;
+import java.security.interfaces.ECPrivateKey;
+import java.security.interfaces.ECPublicKey;
 import java.security.interfaces.RSAPrivateKey;
+import java.security.spec.ECGenParameterSpec;
+import java.security.spec.ECParameterSpec;
 
 public class CAPFileSigner {
+    static final ECParameterSpec secp256r1;
+
+    static {
+        try {
+            // Stupid, but ... There is no other sane way to get parameters than copying from a key
+            KeyPairGenerator generator = KeyPairGenerator.getInstance("EC");
+            generator.initialize(new ECGenParameterSpec("secp256r1"));
+            KeyPair tmp = generator.generateKeyPair();
+            secp256r1 = ((ECPublicKey) tmp.getPublic()).getParams();
+        } catch (GeneralSecurityException e) {
+            throw new IllegalStateException("Can not generate key for parameter extraction!");
+        }
+    }
+
     // Variant 1
     public static void addSignature(CAPFile cap, PrivateKey key) throws GeneralSecurityException {
         if (key instanceof RSAPrivateKey) {
             RSAPrivateKey rkey = (RSAPrivateKey) key;
-            if (rkey.getModulus().bitLength() == 1024) {
+            if ((rkey.getModulus().bitLength() + 7) / 8 == 128) {
                 Signature signer = Signature.getInstance("SHA1withRSA");
                 signer.initSign(key);
                 signer.update(cap.getLoadFileDataHash("SHA1", false));
@@ -51,8 +66,22 @@ public class CAPFileSigner {
                 cap.entries.put("META-INF/" + CAPFile.DAP_RSA_V1_SHA256_FILE, dap);
                 return;
             }
+        } else if (key instanceof ECPrivateKey) {
+            ECPrivateKey ekey = (ECPrivateKey) key;
+            if (ekey.getParams().equals(secp256r1)) {
+                Signature signer = Signature.getInstance("SHA256withECDSA");
+                signer.initSign(key);
+                signer.update(cap.getLoadFileDataHash("SHA-1", false));
+                byte[] dap = signer.sign();
+                cap.entries.put("META-INF/" + CAPFile.DAP_P256_SHA1_FILE, dap);
+                signer.initSign(key);
+                signer.update(cap.getLoadFileDataHash("SHA-256", false));
+                dap = signer.sign();
+                cap.entries.put("META-INF/" + CAPFile.DAP_P256_SHA256_FILE, dap);
+                return;
+            }
         }
-        throw new IllegalArgumentException("Only 1024 bit RSA keys are supported!");
+        throw new IllegalArgumentException("Only 1024 bit RSA and P256 EC keys are supported!");
     }
 
     public static KeyPair pem2keypair(String f) throws IOException {

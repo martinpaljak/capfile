@@ -48,6 +48,9 @@ import java.util.zip.ZipOutputStream;
 public class CAPFile {
     public static final String DAP_RSA_V1_SHA1_FILE = "dap.rsa.sha1";
     public static final String DAP_RSA_V1_SHA256_FILE = "dap.rsa.sha256";
+    public static final String DAP_P256_SHA1_FILE = "dap.p256.sha1";
+    public static final String DAP_P256_SHA256_FILE = "dap.p256.sha256";
+
 
     private static final String[] componentNames = {"Header", "Directory", "Import", "Applet", "Class", "Method", "StaticField", "Export",
             "ConstantPool", "RefLocation", "Descriptor", "Debug"};

@@ -1,5 +1,7 @@
 package pro.javacard;
 
+import org.bouncycastle.util.encoders.Hex;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -84,6 +86,12 @@ public class CAPFileTool {
                 } catch (VerifierError e) {
                     fail("Verification failed: " + e.getMessage());
                 }
+            } else if (has(args, "-sha256")) {
+                if (args.size() < 1)
+                    fail("Usage:\n    capfile -sha256 <capfile>");
+                String capfile = args.remove(0);
+                CAPFile cap = CAPFile.fromBytes(Files.readAllBytes(Paths.get(capfile)));
+                System.out.println(Hex.toHexString(cap.getLoadFileDataHash("SHA-256", false)));
             } else {
                 String capfile = args.remove(0);
                 CAPFile cap = CAPFile.fromBytes(Files.readAllBytes(Paths.get(capfile)));

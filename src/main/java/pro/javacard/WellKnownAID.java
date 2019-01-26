@@ -60,6 +60,9 @@ public class WellKnownAID {
         // Other well-known AID-s
         wellKnownRegistry.put(AID.fromString("A00000015100"), "org.globalplatform");
         wellKnownRegistry.put(AID.fromString("A0000000030000"), "visa.openplatform");
+
+        // Well known card vendor packages
+        wellKnownRegistry.put(AID.fromString("D276000085494A434F5058"), "com.nxp.id.jcopx");
     }
 
     public static String getJavaCardName(AID aid) {

@@ -61,6 +61,9 @@ public class WellKnownAID {
         wellKnownRegistry.put(AID.fromString("A00000015100"), "org.globalplatform");
         wellKnownRegistry.put(AID.fromString("A0000000030000"), "visa.openplatform");
 
+        wellKnownRegistry.put(AID.fromString("A0000000090003FFFFFFFF8910710001"), "sim.access");
+        wellKnownRegistry.put(AID.fromString("A0000000090003FFFFFFFF8910710002"), "sim.toolkit");
+
         // Well known card vendor packages
         wellKnownRegistry.put(AID.fromString("D276000085494A434F5058"), "com.nxp.id.jcopx");
     }

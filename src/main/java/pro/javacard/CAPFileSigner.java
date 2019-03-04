@@ -57,11 +57,11 @@ public class CAPFileSigner {
             if ((rkey.getModulus().bitLength() + 7) / 8 == 128) {
                 Signature signer = Signature.getInstance("SHA1withRSA");
                 signer.initSign(key);
-                signer.update(cap.getLoadFileDataHash("SHA1", false));
+                signer.update(cap.getLoadFileDataHash("SHA1"));
                 byte[] dap = signer.sign();
                 cap.entries.put("META-INF/" + CAPFile.DAP_RSA_V1_SHA1_FILE, dap);
                 signer.initSign(key);
-                signer.update(cap.getLoadFileDataHash("SHA-256", false));
+                signer.update(cap.getLoadFileDataHash("SHA-256"));
                 dap = signer.sign();
                 cap.entries.put("META-INF/" + CAPFile.DAP_RSA_V1_SHA256_FILE, dap);
                 return;
@@ -71,11 +71,11 @@ public class CAPFileSigner {
             if (ekey.getParams().equals(secp256r1)) {
                 Signature signer = Signature.getInstance("SHA256withECDSA");
                 signer.initSign(key);
-                signer.update(cap.getLoadFileDataHash("SHA-1", false));
+                signer.update(cap.getLoadFileDataHash("SHA-1"));
                 byte[] dap = signer.sign();
                 cap.entries.put("META-INF/" + CAPFile.DAP_P256_SHA1_FILE, dap);
                 signer.initSign(key);
-                signer.update(cap.getLoadFileDataHash("SHA-256", false));
+                signer.update(cap.getLoadFileDataHash("SHA-256"));
                 dap = signer.sign();
                 cap.entries.put("META-INF/" + CAPFile.DAP_P256_SHA256_FILE, dap);
                 return;

@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.AccessController;
 import java.security.PrivilegedAction;
 import java.util.ArrayList;
@@ -72,7 +74,9 @@ public final class JavaCardSDK {
                 throw new RuntimeException(e);
             }
         } else if (new File(libDir, "api21.jar").exists()) {
-            version = JavaCardSDK.Version.V21;
+            version = JavaCardSDK.Version.V212;
+        } else if (Files.exists(Paths.get(root.toString(), "bin", "api.jar"))) {
+            version = Version.V211;
         } else if (new File(libDir, "converter.jar").exists()) {
             // assume 2.2.1 first
             version = Version.V221;
@@ -90,8 +94,8 @@ public final class JavaCardSDK {
         return version;
     }
 
-    private Version version = Version.NONE;
-    private File path = null;
+    private final Version version;
+    private final File path;
 
     private JavaCardSDK(File root, Version version) {
         this.path = root;
@@ -104,10 +108,6 @@ public final class JavaCardSDK {
 
     public Version getVersion() {
         return version;
-    }
-
-    public boolean isVersion(Version v) {
-        return version.equals(v);
     }
 
     public String getJavaVersion() {
@@ -181,7 +181,10 @@ public final class JavaCardSDK {
     public List<File> getApiJars() {
         List<File> jars = new ArrayList<>();
         switch (version) {
-            case V21:
+            case V211:
+                jars.add(new File(new File(path, "bin"), "api.jar"));
+                break;
+            case V212:
                 jars.add(getJar("api21.jar"));
                 break;
             case V301:
@@ -201,7 +204,7 @@ public final class JavaCardSDK {
 
     public File getExportDir() {
         switch (version) {
-            case V21:
+            case V212:
                 return new File(path, "api21_export_files");
             default:
                 return new File(path, "api_export_files");
@@ -210,7 +213,10 @@ public final class JavaCardSDK {
 
     public List<File> getToolJars() {
         List<File> jars = new ArrayList<>();
-        if (version.isV3()) {
+        if (version.isOneOf(Version.V211)) {
+            // We don't support verification with 2.1.X, so only converter
+            jars.add(new File(new File(path, "bin"), "converter.jar"));
+        } else if (version.isV3()) {
             jars.add(getJar("tools.jar"));
         } else {
             jars.add(getJar("converter.jar"));
@@ -229,7 +235,7 @@ public final class JavaCardSDK {
     }
 
     public enum Version {
-        NONE, V21, V221, V222, V301, V304, V305;
+        NONE, V211, V212, V221, V222, V301, V304, V305;
 
         @Override
         public String toString() {
@@ -243,20 +249,22 @@ public final class JavaCardSDK {
                 return "2.2.2";
             if (this.equals(V221))
                 return "2.2.1";
-            if (this.equals(V21))
+            if (this.equals(V212))
+                return "2.1.2";
+            if (this.equals(V211))
                 return "2.1.1";
             return "unknown";
         }
 
         public boolean isV3() {
-            switch (this) {
-                case V301:
-                case V304:
-                case V305:
+            return isOneOf(V301, V304, V305);
+        }
+
+        public boolean isOneOf(Version... versions) {
+            for (Version v : versions)
+                if (this.equals(v))
                     return true;
-                default:
-                    return false;
-            }
+            return false;
         }
     }
 

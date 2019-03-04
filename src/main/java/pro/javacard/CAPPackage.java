@@ -57,7 +57,7 @@ public class CAPPackage {
 
     @Override
     public String toString() {
-        return String.format("%s %s v%d.%d", getName().orElse("(unknown)"), aid, major, minor);
+        return String.format("%-32s v%d.%d %s", aid, major, minor, getName().orElse(WellKnownAID.getName(aid).orElse("(unknown)")));
     }
 
     public String getVersionString() {

@@ -42,7 +42,7 @@ public class OffCardVerifier {
 
     public static OffCardVerifier withSDK(JavaCardSDK sdk) {
         // Only main method in 2.1 SDK
-        if (sdk.getVersion().equals(JavaCardSDK.Version.V21))
+        if (sdk.getVersion().equals(JavaCardSDK.Version.V211) || sdk.getVersion().equals(JavaCardSDK.Version.V212))
             throw new RuntimeException("Verification is supported with JavaCard SDK 2.2.1 or later");
         return new OffCardVerifier(sdk);
     }

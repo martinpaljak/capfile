@@ -10,12 +10,20 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.GeneralSecurityException;
 import java.security.KeyPair;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
 import java.util.stream.Collectors;
 
 public class CAPFileTool {
 
+    private final static ArrayList<String> help = new ArrayList<>();
+    static {
+        help.add("    dump:   capfile <capfile>");
+        help.add("    verify: capfile -v <sdkpath> [<targetsdkpath>] <capfile> [<expfiles...>]");
+        help.add("    sign:   capfile -s <keyfile> <capfile>");
+        help.add("    lfdbh:  capfile -sha256 <capfile>");
+    }
     private static boolean has(Vector<String> args, String v) {
         for (String s : args) {
             if (s.equalsIgnoreCase(v)) {
@@ -31,16 +39,14 @@ public class CAPFileTool {
 
         if (args.size() < 1 || has(args, "-h")) {
             System.err.println("Usage:");
-            System.err.println("    dump:   capfile <capfile>");
-            System.err.println("    verify: capfile -v <sdkpath> [<targetsdkpath>] <capfile> [<expfiles...>]");
-            System.err.println("    sign:   capfile -s <keyfile> <capfile>");
+            help.stream().forEach(s -> System.err.println(s));
             System.exit(1);
         }
 
         try {
             if (has(args, "-s")) {
                 if (args.size() < 2)
-                    fail("Usage:\n    capfile -s <keyfile> <capfile>");
+                    fail("Usage:\n" + help.get(2));
                 String keyfile = args.remove(0);
                 Path capfile = Paths.get(args.remove(0));
                 CAPFile cap = CAPFile.fromBytes(Files.readAllBytes(capfile));
@@ -61,7 +67,7 @@ public class CAPFileTool {
 
             } else if (has(args, "-v")) {
                 if (args.size() < 2)
-                    fail("Usage:\n    capfile -v <sdkpath> [<targetsdkpath>] <capfile> [<expfiles...>]");
+                    fail("Usage:\n" + help.get(1));
                 final String sdkpath = args.remove(0);
                 final String targetsdkpath;
                 final String capfile;
@@ -88,10 +94,10 @@ public class CAPFileTool {
                 }
             } else if (has(args, "-sha256")) {
                 if (args.size() < 1)
-                    fail("Usage:\n    capfile -sha256 <capfile>");
+                    fail("Usage:\n" + help.get(3));
                 String capfile = args.remove(0);
                 CAPFile cap = CAPFile.fromBytes(Files.readAllBytes(Paths.get(capfile)));
-                System.out.println(Hex.toHexString(cap.getLoadFileDataHash("SHA-256", false)));
+                System.out.println(Hex.toHexString(cap.getLoadFileDataHash("SHA-256")));
             } else {
                 String capfile = args.remove(0);
                 CAPFile cap = CAPFile.fromBytes(Files.readAllBytes(Paths.get(capfile)));

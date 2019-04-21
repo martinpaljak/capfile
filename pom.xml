@@ -2,20 +2,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.github.martinpaljak</groupId>
+    <parent>
+        <groupId>com.github.martinpaljak</groupId>
+        <artifactId>javacard</artifactId>
+        <version>19.04.21</version>
+    </parent>
     <artifactId>capfile</artifactId>
-    <packaging>jar</packaging>
+    <version>19.04.20</version>
     <name>CAP file library</name>
-    <!-- launch4j requires version without leading zero -->
-    <version>19.03.04</version>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <!-- launch4j requires a version without leading zeros and 4 components -->
-        <revision.windows>19.3.4.0</revision.windows>
-    </properties>
-
     <licenses>
         <license>
             <name>MIT</name>
@@ -28,115 +24,17 @@
         <developerConnection>scm:git:git@github.com:martinpaljak/capfile.git</developerConnection>
     </scm>
     <dependencies>
-        <!-- For PEM parsing in the CLI tool -->
+        <!-- For PEM parsing in the signing tool -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
             <version>1.60</version>
-            <!-- Optional, because only used in CLI -->
             <optional>true</optional>
         </dependency>
     </dependencies>
-
-    <!-- Maven central -->
-    <distributionManagement>
-        <repository>
-            <id>ossrh</id>
-            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-        </repository>
-    </distributionManagement>
-
-    <profiles>
-        <profile>
-            <id>release</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonatype.plugins</groupId>
-                        <artifactId>nexus-staging-maven-plugin</artifactId>
-                        <version>1.6.8</version>
-                        <extensions>true</extensions>
-                        <configuration>
-                            <serverId>ossrh-martinpaljak</serverId>
-                            <nexusUrl>https://oss.sonatype.org/</nexusUrl>
-                            <autoReleaseAfterClose>true</autoReleaseAfterClose>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-source-plugin</artifactId>
-                        <version>3.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-sources</id>
-                                <goals>
-                                    <goal>jar-no-fork</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-javadoc-plugin</artifactId>
-                        <version>3.0.1</version>
-                        <executions>
-                            <execution>
-                                <id>attach-javadocs</id>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-gpg-plugin</artifactId>
-                        <version>1.6</version>
-                        <executions>
-                            <execution>
-                                <id>sign-artifacts</id>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sign</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
     <build>
         <plugins>
-            <!-- Compiler -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.0</version>
-                <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
-                    <compilerArgs>
-                        <arg>-Xlint</arg>
-                    </compilerArgs>
-                </configuration>
-            </plugin>
-            <!-- Findbugs -->
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>findbugs-maven-plugin</artifactId>
-                <version>3.0.5</version>
-                <executions>
-                    <execution>
-                        <phase>verify</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
-
-            <!-- CLI package -->
+            <!-- Small CLI utility -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
@@ -173,7 +71,7 @@
             <plugin>
                 <groupId>com.akathist.maven.plugins.launch4j</groupId>
                 <artifactId>launch4j-maven-plugin</artifactId>
-                <version>1.7.22</version>
+                <version>1.7.25</version>
                 <executions>
                     <execution>
                         <id>capfile-exe</id>
@@ -192,11 +90,15 @@
                                 <minVersion>1.8.0</minVersion>
                             </jre>
                             <versionInfo>
-                                <fileVersion>${revision.windows}</fileVersion>
+                                <fileVersion>
+                                    ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${parsedVersion.buildNumber}
+                                </fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>Parse JavaCard CAP files</fileDescription>
-                                <copyright>(C) 2019 Martin Paljak (MIT License)</copyright>
-                                <productVersion>${revision.windows}</productVersion>
+                                <copyright>(C) 2018-2019 Martin Paljak (MIT License)</copyright>
+                                <productVersion>
+                                    ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${parsedVersion.buildNumber}
+                                </productVersion>
                                 <txtProductVersion>${project.version}</txtProductVersion>
                                 <productName>capfile</productName>
                                 <internalName>capfile</internalName>
@@ -206,17 +108,11 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Reproducible -->
+            <plugin>
+                <groupId>io.github.zlika</groupId>
+                <artifactId>reproducible-build-maven-plugin</artifactId>
+            </plugin>
         </plugins>
     </build>
-    <developers>
-        <developer>
-            <id>martinpaljak</id>
-            <name>Martin Paljak</name>
-            <email>martin@martinpaljak.net</email>
-            <url>https://github.com/martinpaljak</url>
-            <roles>
-                <role>developer</role>
-            </roles>
-        </developer>
-    </developers>
 </project>

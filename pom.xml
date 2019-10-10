@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>com.github.martinpaljak</groupId>
-        <artifactId>javacard</artifactId>
-        <version>19.04.21</version>
+        <artifactId>metacard</artifactId>
+        <version>19.09.05</version>
     </parent>
     <artifactId>capfile</artifactId>
     <version>19.04.20</version>
@@ -28,7 +28,7 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.61</version>
+            <version>1.63</version>
             <optional>true</optional>
         </dependency>
     </dependencies>

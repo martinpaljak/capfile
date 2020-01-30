@@ -1,21 +1,22 @@
 on: pull_request
 name: PR check
 jobs:
-  mvn-java-11:
+  build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java: [ 8, 11, 13 ]
+    name: Java ${{ matrix.java }}
     steps:
-    - uses: actions/checkout@master
-    - name: mvn-java-11
-      uses: docker://maven:3.6.3-jdk-11
-      with:
-        entrypoint: mvn
-        args: -e -U -B package
-  mvn-java-8:
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@master
-    - name: mvn-java-8
-      uses: docker://maven:3.6.3-jdk-8
-      with:
-        entrypoint: mvn
-        args: -e -U -B package
+      - name: Check out code
+        uses: actions/checkout@master
+      - name: Setup java
+        uses: actions/setup-java@master
+        with:
+          java-version: ${{ matrix.java }}
+      - run: mvn verify
+      - name: Upload artefact
+        uses: actions/upload-artifact@master
+        with:
+          name: capfile-java-${{ matrix.java }}.jar
+          path: target/capfile.jar

@@ -34,6 +34,13 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>com.github.spotbugs</groupId>
+                <artifactId>spotbugs-maven-plugin</artifactId>
+                <configuration>
+                    <excludeFilterFile>spotbugs.xml</excludeFilterFile>
+                </configuration>
+            </plugin>
             <!-- Small CLI utility -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

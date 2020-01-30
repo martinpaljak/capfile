@@ -61,6 +61,8 @@ public final class JavaCardSDK {
         Version version = null;
         File libDir = new File(root, "lib");
         if (new File(libDir, "tools.jar").exists()) {
+            if (new File(libDir, "api_classic-3.1.0.jar").exists())
+                return Version.V310;
             File api = new File(libDir, "api_classic.jar");
             try (ZipFile apiZip = new ZipFile(api)) {
                 if (apiZip.getEntry("javacard/framework/SensitiveArrays.class") != null) {
@@ -110,8 +112,11 @@ public final class JavaCardSDK {
         return version;
     }
 
+    // This indicates the highest class file version edible by SDK-s converter
     public String getJavaVersion() {
         switch (version) {
+            case V310:
+                return "1.7";
             case V301:
             case V304:
             case V305:
@@ -192,6 +197,9 @@ public final class JavaCardSDK {
             case V305:
                 jars.add(getJar("api_classic.jar"));
                 break;
+            case V310:
+                jars.add(getJar("api_classic-3.1.0.jar"));
+                jars.add(getJar("api_classic_annotations-3.1.0.jar"));
             default:
                 jars.add(getJar("api.jar"));
         }
@@ -206,6 +214,8 @@ public final class JavaCardSDK {
         switch (version) {
             case V212:
                 return new File(path, "api21_export_files");
+            case V310:
+                return new File(path, "api_export_files_3.1.0");
             default:
                 return new File(path, "api_export_files");
         }
@@ -235,10 +245,12 @@ public final class JavaCardSDK {
     }
 
     public enum Version {
-        NONE, V211, V212, V221, V222, V301, V304, V305;
+        NONE, V211, V212, V221, V222, V301, V304, V305, V310;
 
         @Override
         public String toString() {
+            if (this.equals(V310))
+                return "3.1.0";
             if (this.equals(V305))
                 return "3.0.5";
             if (this.equals(V304))
@@ -257,7 +269,7 @@ public final class JavaCardSDK {
         }
 
         public boolean isV3() {
-            return isOneOf(V301, V304, V305);
+            return this.name().startsWith("V3");
         }
 
         public boolean isOneOf(Version... versions) {

@@ -34,6 +34,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: .target/capfile.jar
+          asset_path: target/capfile.jar
           asset_name: capfile.jar
           asset_content_type: application/zip

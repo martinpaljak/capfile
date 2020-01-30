@@ -5,10 +5,10 @@
     <parent>
         <groupId>com.github.martinpaljak</groupId>
         <artifactId>metacard</artifactId>
-        <version>19.09.03</version>
+        <version>20.01.14</version>
     </parent>
     <artifactId>capfile</artifactId>
-    <version>19.04.20</version>
+    <version>20.01.30</version>
     <name>CAP file library</name>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>
@@ -94,7 +94,7 @@
                                 </fileVersion>
                                 <txtFileVersion>${project.version}</txtFileVersion>
                                 <fileDescription>Parse JavaCard CAP files</fileDescription>
-                                <copyright>(C) 2018-2019 Martin Paljak (MIT License)</copyright>
+                                <copyright>(C) 2018-2020 Martin Paljak (MIT License)</copyright>
                                 <productVersion>
                                     ${parsedVersion.majorVersion}.${parsedVersion.minorVersion}.${parsedVersion.incrementalVersion}.${parsedVersion.buildNumber}
                                 </productVersion>

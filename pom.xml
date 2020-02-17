@@ -8,7 +8,7 @@
         <version>20.01.14</version>
     </parent>
     <artifactId>capfile</artifactId>
-    <version>20.01.30</version>
+    <version>20.02.17</version>
     <name>CAP file library</name>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>
@@ -23,6 +23,13 @@
         <url>https://github.com/martinpaljak/capfile</url>
         <developerConnection>scm:git:git@github.com:martinpaljak/capfile.git</developerConnection>
     </scm>
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub martinpaljak/capfile packages</name>
+            <url>https://maven.pkg.github.com/martinpaljak/capfile</url>
+        </repository>
+    </distributionManagement>
     <dependencies>
         <!-- For PEM parsing in the signing tool -->
         <dependency>

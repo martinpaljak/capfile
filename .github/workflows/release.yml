@@ -16,6 +16,12 @@ jobs:
         uses: actions/setup-java@master
         with:
           java-version: 1.8
+      - name: Set SSH key
+        uses: webfactory/ssh-agent@v0.2.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_KEY }}
+      - name: Add known host key
+        run: ssh-keyscan javacard.pro >> ~/.ssh/known_hosts
       - name: Package
         run: mvn -B verify
       - name: Release
@@ -38,7 +44,5 @@ jobs:
           asset_path: target/capfile.jar
           asset_name: capfile.jar
           asset_content_type: application/zip
-      - name: Publish to GitHub Packages
+      - name: Deploy package
         run: mvn deploy
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.martinpaljak</groupId>
         <artifactId>metacard</artifactId>
-        <version>20.01.14</version>
+        <version>20.02.19</version>
     </parent>
     <artifactId>capfile</artifactId>
     <version>20.02.17</version>
@@ -23,13 +23,13 @@
         <url>https://github.com/martinpaljak/capfile</url>
         <developerConnection>scm:git:git@github.com:martinpaljak/capfile.git</developerConnection>
     </scm>
-    <distributionManagement>
+    <repositories>
         <repository>
-            <id>github</id>
-            <name>GitHub martinpaljak/capfile packages</name>
-            <url>https://maven.pkg.github.com/martinpaljak/capfile</url>
+            <id>javacard-pro</id>
+            <name>javacard.pro</name>
+            <url>https://javacard.pro/maven/</url>
         </repository>
-    </distributionManagement>
+    </repositories>
     <dependencies>
         <!-- For PEM parsing in the signing tool -->
         <dependency>
@@ -62,7 +62,8 @@
                         <configuration>
                             <finalName>capfile</finalName>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>pro.javacard.CAPFileTool</mainClass>
                                 </transformer>
                             </transformers>

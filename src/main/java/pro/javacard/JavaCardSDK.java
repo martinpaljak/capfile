@@ -200,6 +200,7 @@ public final class JavaCardSDK {
             case V310:
                 jars.add(getJar("api_classic-3.1.0.jar"));
                 jars.add(getJar("api_classic_annotations-3.1.0.jar"));
+                break;
             default:
                 jars.add(getJar("api.jar"));
         }

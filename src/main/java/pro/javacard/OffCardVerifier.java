@@ -65,8 +65,8 @@ public class OffCardVerifier {
     // Verify a given CAP file against a set of EXP files
     public void verify(File f, Vector<File> exps) throws VerifierError {
         File tmp = makeTemp();
-        try {
-            CAPFile cap = CAPFile.fromStream(new FileInputStream(f));
+        try (InputStream in = new FileInputStream(f)) {
+            CAPFile cap = CAPFile.fromStream(in);
 
             // Get verifier class
             Class<?> verifier = Class.forName("com.sun.javacard.offcardverifier.Verifier", true, sdk.getClassLoader());
@@ -153,6 +153,13 @@ public class OffCardVerifier {
         }
     }
 
+    private static File under(File out, String name) {
+        Path p = Paths.get(out.getAbsolutePath(), name);
+        if (!p.startsWith(out.getAbsolutePath()))
+            throw new IllegalArgumentException("Invalid path in JAR: " + name);
+        return null;
+    }
+
     public static Vector<File> extractExps(File in, File out) throws IOException {
         Vector<File> exps = new Vector<>();
         try (JarFile jarfile = new JarFile(in)) {
@@ -160,11 +167,11 @@ public class OffCardVerifier {
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 if (entry.getName().toLowerCase().endsWith(".exp")) {
-                    File f = new File(out, entry.getName());
+                    File f = under(out, entry.getName());
                     if (!f.exists()) {
                         if (!f.getParentFile().mkdirs())
                             throw new IOException("Failed to create folder: " + f.getParentFile());
-                        f = new File(out, entry.getName());
+                        f = under(out, entry.getName());
                     }
                     try (InputStream is = jarfile.getInputStream(entry);
                          FileOutputStream fo = new java.io.FileOutputStream(f)) {

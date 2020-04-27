@@ -27,6 +27,7 @@ import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.security.*;
 import java.security.interfaces.ECPrivateKey;
@@ -85,7 +86,8 @@ public class CAPFileSigner {
     }
 
     public static KeyPair pem2keypair(String f) throws IOException {
-        try (PEMParser pem = new PEMParser(new InputStreamReader(new FileInputStream(f), "UTF-8"))) {
+        // This pleases both spotbugs and lgtm.
+        try (InputStream in = new FileInputStream(f); PEMParser pem = new PEMParser(new InputStreamReader(in, "UTF-8"))) {
             PEMKeyPair kp = (PEMKeyPair) pem.readObject();
             return new JcaPEMKeyConverter().getKeyPair(kp);
         }

@@ -31,6 +31,7 @@ public class WellKnownAID {
     private static Map<AID, String> javaCardRegistry = new HashMap<>();
     private static Map<AID, String> wellKnownRegistry = new HashMap<>();
 
+    // TODO: amend this from external list, to not depend on code changes
     static {
         // Copied from https://stackoverflow.com/questions/25031338/how-to-get-javacard-version-on-card/25063015#25063015
         // Extended and verified against JC SDK exp files
@@ -63,6 +64,10 @@ public class WellKnownAID {
 
         wellKnownRegistry.put(AID.fromString("A0000000090003FFFFFFFF8910710001"), "sim.access");
         wellKnownRegistry.put(AID.fromString("A0000000090003FFFFFFFF8910710002"), "sim.toolkit");
+
+        // Global Platform SSD
+        wellKnownRegistry.put(AID.fromString("A0000001515350"), "SSD creation package");
+        wellKnownRegistry.put(AID.fromString("A000000151535041"), "SSD creation applet");
 
         // Well known card vendor packages
         wellKnownRegistry.put(AID.fromString("D276000085494A434F5058"), "com.nxp.id.jcopx");

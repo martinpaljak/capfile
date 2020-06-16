@@ -5,10 +5,10 @@
     <parent>
         <groupId>com.github.martinpaljak</groupId>
         <artifactId>metacard</artifactId>
-        <version>20.04.13</version>
+        <version>20.06.04</version>
     </parent>
     <artifactId>capfile</artifactId>
-    <version>20.02.20-SNAPSHOT</version>
+    <version>20.06.16-SNAPSHOT</version>
     <name>CAP file library</name>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>
@@ -23,13 +23,6 @@
         <url>https://github.com/martinpaljak/capfile</url>
         <developerConnection>scm:git:git@github.com:martinpaljak/capfile.git</developerConnection>
     </scm>
-    <repositories>
-        <repository>
-            <id>javacard-pro</id>
-            <name>javacard.pro</name>
-            <url>https://javacard.pro/maven/</url>
-        </repository>
-    </repositories>
     <dependencies>
         <!-- For PEM parsing in the signing tool -->
         <dependency>

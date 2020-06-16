@@ -1,5 +1,7 @@
-/.idea
-*~
-/target
+**/target
 *.iml
+*~
+/.idea
+/.mvn/wrapper/maven-wrapper.jar
+/target
 pom.xml.versionsBackup

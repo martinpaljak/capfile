@@ -20,7 +20,7 @@ jobs:
         uses: actions/setup-java@master
         with:
           java-version: ${{ matrix.java }}
-      - run: mvn verify
+      - run: ./mvnw verify
       - name: Upload artefact
         uses: actions/upload-artifact@master
         with:

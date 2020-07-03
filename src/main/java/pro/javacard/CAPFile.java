@@ -32,6 +32,8 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
@@ -64,6 +66,7 @@ public class CAPFile {
     // Metadata
     private Manifest manifest = null; // From 2.2.2
     private Document appletxml = null; // From 3.0.1
+    private Path file;
 
 
     public static CAPFile fromStream(InputStream in) throws IOException {
@@ -72,6 +75,18 @@ public class CAPFile {
 
     public static CAPFile fromBytes(byte[] bytes) throws IOException {
         return fromStream(new ByteArrayInputStream(bytes));
+    }
+
+    public static CAPFile fromFile(Path path) throws IOException {
+        try (InputStream in = Files.newInputStream(path)) {
+            CAPFile cap = fromStream(in);
+            cap.file = path;
+            return cap;
+        }
+    }
+
+    public Optional<Path> getFile() {
+        return Optional.ofNullable(file);
     }
 
     protected byte[] getComponent(String name) {

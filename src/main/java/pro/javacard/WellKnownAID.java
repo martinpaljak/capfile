@@ -22,6 +22,14 @@
 
 package pro.javacard;
 
+import org.yaml.snakeyaml.Yaml;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
@@ -31,7 +39,6 @@ public class WellKnownAID {
     private static Map<AID, String> javaCardRegistry = new HashMap<>();
     private static Map<AID, String> wellKnownRegistry = new HashMap<>();
 
-    // TODO: amend this from external list, to not depend on code changes
     static {
         // Copied from https://stackoverflow.com/questions/25031338/how-to-get-javacard-version-on-card/25063015#25063015
         // Extended and verified against JC SDK exp files
@@ -69,8 +76,34 @@ public class WellKnownAID {
         wellKnownRegistry.put(AID.fromString("A0000001515350"), "SSD creation package");
         wellKnownRegistry.put(AID.fromString("A000000151535041"), "SSD creation applet");
 
-        // Well known card vendor packages
-        wellKnownRegistry.put(AID.fromString("D276000085494A434F5058"), "com.nxp.id.jcopx");
+        // Load internal
+        try (InputStream in = WellKnownAID.class.getResourceAsStream("aid_list.yml")) {
+            load(in);
+        } catch (IOException e) {
+            throw new RuntimeException("Can not load builtin list of AID-s: " + e.getMessage(), e);
+        }
+
+        // Try to load more
+        Path p = Paths.get(System.getenv().getOrDefault("AID_LIST", Paths.get(System.getProperty("user.home"), ".apdu4j", "aid_list.yml").toString()));
+        load(p);
+    }
+
+    static void load(InputStream in) {
+        ArrayList<Map<String, String>> content = new Yaml().load(in);
+        for (Map<String, String> e : content) {
+            wellKnownRegistry.put(new AID(e.get("aid")), e.get("name"));
+        }
+    }
+
+    public static void load(Path p) {
+        if (!Files.exists(p))
+            return;
+
+        try (InputStream in = Files.newInputStream(p)) {
+            load(in);
+        } catch (IOException e) {
+            System.err.println("Could not parse AID list: " + e.getMessage());
+        }
     }
 
     public static String getJavaCardName(AID aid) {

@@ -53,7 +53,6 @@ public class CAPFile {
     public static final String DAP_P256_SHA1_FILE = "dap.p256.sha1";
     public static final String DAP_P256_SHA256_FILE = "dap.p256.sha256";
 
-
     private static final String[] componentNames = {"Header", "Directory", "Import", "Applet", "Class", "Method", "StaticField", "Export",
             "ConstantPool", "RefLocation", "Descriptor", "Debug"};
     protected final Map<String, byte[]> entries; // All raw ZIP entries
@@ -395,6 +394,9 @@ public class CAPFile {
                     return Optional.of("2.2");
                 } else if (p.minor == 5 || p.minor == 6) {
                     return Optional.of("2.2.1");
+                } else if (p.minor == 7) {
+                    // This is not really right, but a good indication nevertheless
+                    return Optional.of("2.3.1+A");
                 } else {
                     return Optional.of(String.format("unknown: %d.%d", p.major, p.minor));
                 }

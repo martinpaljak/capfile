@@ -89,9 +89,18 @@ public class WellKnownAID {
     }
 
     static void load(InputStream in) {
-        ArrayList<Map<String, String>> content = new Yaml().load(in);
-        for (Map<String, String> e : content) {
-            wellKnownRegistry.put(new AID(e.get("aid")), e.get("name"));
+        // TODO: add logging instead of system.err
+        try {
+            ArrayList<Map<String, String>> content = new Yaml().load(in);
+            for (Map<String, String> e : content) {
+                if (e.containsKey("aid") && e.containsKey("name")) {
+                    wellKnownRegistry.put(new AID(e.get("aid")), e.get("name"));
+                } else {
+                    System.err.println("Invalid entry: " + e);
+                }
+            }
+        } catch (ClassCastException e) {
+            System.err.println("Invalid format: " + e.getMessage());
         }
     }
 

@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.security.GeneralSecurityException;
-import java.security.KeyPair;
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Vector;
@@ -52,8 +52,8 @@ public class CAPFileTool {
                 CAPFile cap = CAPFile.fromBytes(Files.readAllBytes(capfile));
                 cap.dump(System.out);
                 try {
-                    KeyPair kp = CAPFileSigner.pem2keypair(keyfile);
-                    CAPFileSigner.addSignature(cap, kp.getPrivate());
+                    PrivateKey signingKey = CAPFileSigner.pem2privatekey(keyfile);
+                    CAPFileSigner.addSignature(cap, signingKey);
                     Path where = capfile.getParent();
                     if (where == null)
                         where = Paths.get(".");

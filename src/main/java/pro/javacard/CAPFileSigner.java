@@ -21,6 +21,7 @@
  */
 package pro.javacard;
 
+import org.bouncycastle.asn1.pkcs.PrivateKeyInfo;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
 import org.bouncycastle.openssl.jcajce.JcaPEMKeyConverter;
@@ -85,11 +86,16 @@ public class CAPFileSigner {
         throw new IllegalArgumentException("Only 1024 bit RSA and P256 EC keys are supported!");
     }
 
-    public static KeyPair pem2keypair(String f) throws IOException {
+    public static PrivateKey pem2privatekey(String f) throws IOException {
         // This pleases both spotbugs and lgtm.
         try (InputStream in = new FileInputStream(f); PEMParser pem = new PEMParser(new InputStreamReader(in, "UTF-8"))) {
-            PEMKeyPair kp = (PEMKeyPair) pem.readObject();
-            return new JcaPEMKeyConverter().getKeyPair(kp);
+            Object ohh = pem.readObject();
+            if (ohh instanceof PEMKeyPair) {
+                PEMKeyPair kp = (PEMKeyPair) ohh;
+                return new JcaPEMKeyConverter().getKeyPair(kp).getPrivate();
+            } else if (ohh instanceof PrivateKeyInfo) {
+                return new JcaPEMKeyConverter().getPrivateKey((PrivateKeyInfo) ohh);
+            } else throw new IllegalArgumentException("Can not read PEM");
         }
     }
 }

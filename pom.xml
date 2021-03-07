@@ -5,7 +5,7 @@
     <parent>
         <groupId>com.github.martinpaljak</groupId>
         <artifactId>metacard</artifactId>
-        <version>20.08.07</version>
+        <version>21.01.19</version>
     </parent>
     <artifactId>capfile</artifactId>
     <version>20.08.13-SNAPSHOT</version>
@@ -23,19 +23,26 @@
         <url>https://github.com/martinpaljak/capfile</url>
         <developerConnection>scm:git:git@github.com:martinpaljak/capfile.git</developerConnection>
     </scm>
+    <!-- Always pick up private deps -->
+    <repositories>
+        <repository>
+            <id>javacard-pro</id>
+            <url>https://javacard.pro/maven/</url>
+        </repository>
+    </repositories>
     <dependencies>
         <!-- For PEM parsing in the signing tool -->
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.66</version>
+            <version>1.68</version>
             <optional>true</optional>
         </dependency>
         <!-- For parsing aid_list.yml in WellKnownAID -->
         <dependency>
             <groupId>org.yaml</groupId>
             <artifactId>snakeyaml</artifactId>
-            <version>1.26</version>
+            <version>1.28</version>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>

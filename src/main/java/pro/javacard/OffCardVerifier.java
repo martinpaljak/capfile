@@ -157,7 +157,7 @@ public class OffCardVerifier {
         Path p = Paths.get(out.getAbsolutePath(), name);
         if (!p.startsWith(out.getAbsolutePath()))
             throw new IllegalArgumentException("Invalid path in JAR: " + name);
-        return null;
+        return p.toFile();
     }
 
     public static Vector<File> extractExps(File in, File out) throws IOException {

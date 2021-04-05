@@ -8,7 +8,7 @@
         <version>21.04.02</version>
     </parent>
     <artifactId>capfile</artifactId>
-    <version>21.03.8-SNAPSHOT</version>
+    <version>21.04.05</version>
     <name>CAP file library</name>
     <url>https://github.com/martinpaljak/capfile</url>
     <description>JavaCard CAP parsing</description>

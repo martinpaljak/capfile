@@ -27,3 +27,5 @@
 # based on https://github.com/tsenger/CCU2F/blob/master/CCU2F/cap/ccu2f.cap
 - aid: D276000085494A434F5058
   name: com.nxp.id.jcopx
+- aid: A0000003964D344D30
+  name: org.mifare4mobile.hostinterface

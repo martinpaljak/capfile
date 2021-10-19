@@ -321,11 +321,11 @@ public class CAPFile {
     }
 
     public List<CAPPackage> getImports() {
-        return imports;
+        return Collections.unmodifiableList(imports);
     }
 
     public Map<AID, String> getApplets() {
-        return applets;
+        return Collections.unmodifiableMap(applets);
     }
 
     // Guess the targeted JavaCard version based on javacard.framework version
